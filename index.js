@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 
 
 import connectDB from "./config/db.js";
+import connectCloudinary from "./config/cloudinary.js"; // Ensure cloudinary is configured
 
 dotenv.config();
 
@@ -29,6 +30,8 @@ app.use('/api/v1/auth', authRoutes)
 const startServer = async () => {
     try {
         await connectDB();
+        await connectCloudinary(); // Ensure Cloudinary is connected
+        console.log("✅ Connected to Cloudinary");
         app.listen(PORT, () => {
             console.log(`✅ Server is running on port ${PORT}`);
         });
