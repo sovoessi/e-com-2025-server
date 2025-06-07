@@ -26,9 +26,10 @@ export const register = async (req, res) => {
 			sameSite: "none", // Required for cross-site cookies
 			maxAge: 24 * 60 * 60 * 1000, // 1 day
 		});
-		res
-			.status(201)
-			.json({ user: { username: user.username, email: user.email }, token });
+		res.status(201).json({
+			user: { username: user.username, email: user.email, role: user.role },
+			token,
+		});
 	} catch (error) {
 		res.status(500).json({ message: "Server error", error: error.message });
 	}
