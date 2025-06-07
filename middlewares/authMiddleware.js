@@ -35,6 +35,20 @@ export const authorizeAdmin = (req, res, next) => {
 	next();
 };
 
+// Check if user is Admin
+export const isAdmin = (req, res, next) => {
+	try {
+		const user = req.user; // Assuming user is set in a previous middleware
+		if (user && user.role === "admin") {
+			next();
+		} else {
+			res.status(403).json({ message: "Access denied" });
+		}
+	} catch (error) {
+		res.status(500).json({ message: "Server error", error: error.message });
+	}
+};
+
 // Middleware to protect routes
 export const protectRoute = (req, res, next) => {
 	if (!req.user) {
