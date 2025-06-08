@@ -74,16 +74,45 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
     const { id } = req.params;
     try {
-        const product = await Product.findByIdAndUpdate(id, req.body, {
-            new: true,
-            runValidators: true
-        });
+        // Find the product first
+        const product = await Product.findById(id);
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
-        res.status(200).json(product);
-    }
-    catch (error) {
+
+        // Prepare update data
+        const updateData = { ...req.body };
+
+        // Handle new image uploads if present
+        if (req.files && req.files.length > 0) {
+            // Upload new images to Cloudinary
+            const imageUrls = await Promise.all(
+                req.files.map(
+                    file =>
+                        new Promise((resolve, reject) => {
+                            const stream = cloudinary.uploader.upload_stream(
+                                { folder: 'products' },
+                                (error, result) => {
+                                    if (error) reject(error);
+                                    else resolve(result.secure_url);
+                                }
+                            );
+                            stream.end(file.buffer);
+                        })
+                )
+            );
+            // Optionally, merge with existing images or replace
+            updateData.images = imageUrls;
+        }
+
+        // Update the product
+        const updatedProduct = await Product.findByIdAndUpdate(id, updateData, {
+            new: true,
+            runValidators: true
+        });
+
+        res.status(200).json(updatedProduct);
+    } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 }
