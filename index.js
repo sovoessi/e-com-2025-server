@@ -8,7 +8,6 @@ import productRoutes from "./routes/productRoutes.js";
 
 
 import connectDB from "./config/db.js";
-import connectCloudinary from "./config/cloudinary.js"; // Ensure cloudinary is configured
 
 dotenv.config();
 
@@ -33,7 +32,6 @@ app.use("/api/v1/products", productRoutes);
 const startServer = async () => {
     try {
         await connectDB();
-        await connectCloudinary(); // Ensure Cloudinary is connected
         app.listen(PORT, () => {
             console.log(`✅ Server is running on port ${PORT}`);
         });

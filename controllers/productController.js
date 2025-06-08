@@ -30,15 +30,15 @@ export const createProduct = async (req, res) => {
 
 		// Handle single or multiple images
 		if (req.files && req.files.length > 0) {
-			const uploadPromises = req.files.map((file) =>
-				cloudinary.uploader.upload_stream(
-					{ folder: "ecom2025/products" },
-					(error, result) => {
-						if (error) throw error;
-						return result.secure_url;
-					}
-				)
-			);
+			// const uploadPromises = req.files.map((file) =>
+			// 	cloudinary.uploader.upload_stream(
+			// 		{ folder: "ecom2025/products" },
+			// 		(error, result) => {
+			// 			if (error) throw error;
+			// 			return result.secure_url;
+			// 		}
+			// 	)
+			// );
 			// Use Promise.all with streams
 			imageUrls = await Promise.all(
 				req.files.map(
