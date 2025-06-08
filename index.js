@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/authRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
 
 
 import connectDB from "./config/db.js";
@@ -26,6 +27,8 @@ app.get("/", (req, res) => {
 });
 
 app.use('/api/v1/auth', authRoutes)
+app.use("/api/v1/products", productRoutes);
+
 
 const startServer = async () => {
     try {

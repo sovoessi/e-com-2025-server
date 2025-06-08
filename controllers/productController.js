@@ -1,4 +1,5 @@
 import Product from '../models/Product.js';
+import cloudinary from '../config/cloudinary.js';
 
 
 export const getAllProducts = async (req, res) => {
@@ -26,7 +27,43 @@ export const getProductById = async (req, res) => {
 
 export const createProduct = async (req, res) => {
     try {
-        const product = new Product(req.body);
+        const { name, price, description, ...rest } = req.body;
+        let imageUrls = [];
+
+        // Handle single or multiple images
+        if (req.files && req.files.length > 0) {
+            const uploadPromises = req.files.map(file =>
+                cloudinary.uploader.upload_stream({ folder: 'products' }, (error, result) => {
+                    if (error) throw error;
+                    return result.secure_url;
+                })
+            );
+            // Use Promise.all with streams
+            imageUrls = await Promise.all(
+                req.files.map(
+                    file =>
+                        new Promise((resolve, reject) => {
+                            const stream = cloudinary.uploader.upload_stream(
+                                { folder: 'products' },
+                                (error, result) => {
+                                    if (error) reject(error);
+                                    else resolve(result.secure_url);
+                                }
+                            );
+                            stream.end(file.buffer);
+                        })
+                )
+            );
+        }
+
+        const product = new Product({
+            name,
+            price,
+            description,
+            images: imageUrls,
+            ...rest,
+        });
+
         await product.save();
         res.status(201).json(product);
     } catch (error) {
