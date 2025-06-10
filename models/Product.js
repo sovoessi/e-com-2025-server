@@ -27,15 +27,15 @@ const productSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        enum: ["All","electronics", "clothing", "home", "books", "toys", "sports"],
+        enum: ["all","electronics", "clothing", "home", "books", "toys", "sports"],
         required: true,
-        default: "All"
+        default: "all"
     },
     gender: {
         type: String,
-        enum: ["All","men", "women", "unisex", "kids"],
+        enum: ["all","men", "women", "unisex", "kids"],
         required: true,
-        default: "All"
+        default: "all"
     },
     bestSeller: {
         type: Boolean,
