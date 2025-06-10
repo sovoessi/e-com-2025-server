@@ -4,7 +4,7 @@ import {
     getUserOrders,
     getOrderById,
 } from "../controllers/orderController.js";
-import { authenticate } from "../middleware/authMiddleware.js";
+import { authenticate } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
