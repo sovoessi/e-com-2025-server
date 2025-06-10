@@ -6,11 +6,8 @@ export const createOrder = async (req, res) => {
     try {
         const { products, totalAmount, shippingAddress } = req.body;
         const userId = req.user.userId; // assuming auth middleware sets req.user
-
-        // Validate address belongs to user
-        const address = await UserAddress.findOne({ _id: shippingAddress, userId });
-        if (!address) {
-            return res.status(400).json({ message: "Invalid shipping address" });
+        if (!products || !totalAmount || !shippingAddress) {
+            return res.status(400).json({ message: "All fields are required" });
         }
 
         const order = await Order.create({
@@ -31,7 +28,8 @@ export const getUserOrders = async (req, res) => {
         const userId = req.user.userId;
         const orders = await Order.find({ userId })
             .populate("products.productId")
-            .populate("shippingAddress");
+            .populate("shippingAddress")
+            .sort({ createdAt: -1 }); // Sort by most recent first
         res.status(200).json(orders);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -46,7 +44,7 @@ export const getOrderById = async (req, res) => {
         const order = await Order.findOne({ _id: id, userId })
             .populate("products.productId")
             .populate("shippingAddress");
-        if (!order) {
+         if (!order) {
             return res.status(404).json({ message: "Order not found" });
         }
         res.status(200).json(order);
