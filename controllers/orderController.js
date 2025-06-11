@@ -3,17 +3,17 @@ import Order from "../models/Order.js";
 // Create a new order
 export const createOrder = async (req, res) => {
     try {
-        const { products, totalAmount, shippingAddress } = req.body;
-        const userId = req.user.userId; // assuming auth middleware sets req.user
-        if (!products || !totalAmount || !shippingAddress) {
+        const { products, totalAmount, shippingAddress, paymentMethod } = req.body;
+        const userId = req.user.userId;
+        if (!products || !totalAmount || !shippingAddress || !paymentMethod) {
             return res.status(400).json({ message: "All fields are required" });
         }
-
         const order = await Order.create({
             userId,
             products,
             totalAmount,
             shippingAddress,
+            paymentMethod,
         });
         res.status(201).json(order);
     } catch (error) {
